@@ -1,0 +1,83 @@
+{% if course.error %}
+    <div class="error">{{ course.error }}</div>
+{% else %}
+
+    <div class="course_overview">
+
+        <div class="course-overview-title">{{ course.title }}</div>
+
+        {% for module in course.modules %}
+
+            <{{ list_type }}  class="course-overview-module-wrapper">
+
+                {% if not hide_modules %}
+                    <li class="course-overview-module"><span class="module-title">{{ module.title }}</span>
+                {% endif %}
+
+
+                {% for column in module.columns %}
+
+                    <div class="course-overview-column">
+
+                        <{{ list_type }} start={{ column.units[0]['number'] }} class="course-overview-units">
+                            {% for unit in column.units %}
+
+                                {% if unit.url %}
+                                    {% set title = '<a href="'~ unit.url ~ '">' ~ unit.title ~ '</a>' %}
+                                {% else %}
+                                    {% set title = unit.title %}
+                                {% endif %}
+
+                                {% if unit.status  == 'complete' %}
+                                    {% set complete = '<span class="wpcw_fe_unit_progress wpcw_fe_unit_progress_complete"><span>&nbsp;</span></span>' %}
+                                {% else %}
+                                    {% set complete = '' %}
+                                {% endif %}
+
+                                <li class="course-overview-unit"><span class="unit-title">{{ title | raw }}</span>{{ complete | raw }}</li>
+
+                            {% endfor %}
+                        </{{ list_type }} >
+
+                    </div>
+
+                {% endfor %}
+
+
+                {% if not hide_modules %}
+                    </li>
+                {% endif %}
+
+            </{{ list_type }} >
+
+            {% endfor %}
+
+    </div>
+
+    <div class="course_wrapper">
+        <div class="course-enrollment-status">
+            {% if course.enrollment_date %}
+                {% if course.percent_complete > 0 %}
+                    {% set enrollment_button = 'Resume Training' %}
+                {% else %}
+                    {% set enrollment_button = 'Start Training' %}
+                {% endif %}
+                <div class="enrollment-userenrolled">
+                    You are enrolled and {{ course.percent_complete }}% complete. <a href="{{ course.current_unit_url }}">{{ enrollment_button }}</a>
+                </div>
+            {% else %}
+                {% if course.invitation_only %}
+                    <div class="enrollment-by-invitation">This course is by invitation only.</div>
+                {% else %}
+                    <div class="enrollment-user-not-enrolled">
+                        You have not yet enrolled. <a href="{{ course.enrollment_url }}">Enroll Now</a>
+                    </div>;
+                {% endif %}
+            {% endif %}
+        </div>
+</div>
+
+{% endif %}
+
+
+
